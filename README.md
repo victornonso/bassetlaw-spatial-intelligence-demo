@@ -72,3 +72,9 @@ Target architecture: Vercel frontend, Render API, Supabase PostgreSQL/PostGIS. S
 ## Interview materials
 
 presentation_assets/end-slide-copy.txt contains proposed presentation copy. The production screenshot and QR assets are gated on a working deployed HTTPS custom domain. A local preview is not a production screenshot. See docs/DEMO_SCRIPT.md for a concise walkthrough and likely panel questions.
+
+## Verified provider resources
+
+GitHub: https://github.com/victornonso/bassetlaw-spatial-intelligence-demo
+
+API: https://bassetlaw-spatial-intelligence-demo.onrender.com. Health, readiness (PostGIS mode) and a real Retford insight query verified on 17 November 2026. Supabase project reference awoaxaoypiofvyxdliak. The production frontend defaults to this verified public API URL; VITE_API_BASE_URL can override it. No database credential is committed.

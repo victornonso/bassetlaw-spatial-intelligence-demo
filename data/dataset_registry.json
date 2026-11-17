@@ -22,7 +22,7 @@
       "provider",
       "source_url"
     ],
-    "transformations": "Select Bassetlaw, retain named fields, transform British National Grid to WGS84 using pyproj. Flood polygons clipped then simplified 5m in EPSG:27700. GIAS personal/contact fields discarded.",
+    "transformations": "Select Bassetlaw geography; request WGS84 from ONS ArcGIS; normalise identifiers and names. Retain the published historical generalised boundary.",
     "limitations": "Historical generalised clipped boundary. Unsuitable for legal or property-scale boundary decisions.",
     "attribution": "Source: Office for National Statistics licensed under the Open Government Licence v.3.0. Contains OS data \u00c2\u00a9 Crown copyright and database right 2024.",
     "feature_count": 1,
@@ -52,7 +52,7 @@
       "provider",
       "source_url"
     ],
-    "transformations": "Select Bassetlaw, retain named fields, transform British National Grid to WGS84 using pyproj. Flood polygons clipped then simplified 5m in EPSG:27700. GIAS personal/contact fields discarded.",
+    "transformations": "Select Bassetlaw geography; request WGS84 from ONS ArcGIS; normalise identifiers and names. Retain the published historical generalised boundary.",
     "limitations": "Historical simplified geography, not a claim about current electoral boundaries; not Census statistical areas.",
     "attribution": "Source: Office for National Statistics licensed under the Open Government Licence v.3.0. Contains OS data \u00c2\u00a9 Crown copyright and database right 2024.",
     "feature_count": 25,
@@ -84,8 +84,8 @@
       "source_url",
       "zone"
     ],
-    "transformations": "Download all pages, repair geometry, clip to district, simplify 50m followed by geometry validation in EPSG:27700, transform to EPSG:4326 and repair; no coordinate rounding.",
-    "limitations": "Rivers/sea planning context ignoring defences. Not surface-water, reservoir or individual-property risk. No intersection is not evidence of no risk. Extract clipped to generalised district; simplified at 5 m. Simplified 20m display/analysis snapshot: boundaries can shift within this tolerance. Always consult the official Flood Map for Planning for site-scale assessment. Simplified 20m display/analysis snapshot: boundaries can shift within this tolerance. Always consult the official Flood Map for Planning for site-scale assessment. Simplified 20m display/analysis snapshot: boundaries can shift within this tolerance. Always consult the official Flood Map for Planning for site-scale assessment. Simplified 50m display/analysis snapshot: boundaries can shift within this tolerance. Always consult the official Flood Map for Planning for site-scale assessment. Simplified 50m display/analysis snapshot: boundaries can shift within this tolerance. Always consult the official Flood Map for Planning for site-scale assessment.",
+    "transformations": "Follow EA pagination; repair geometry; clip to district; simplify at 50m in EPSG:27700; transform to EPSG:4326; round coordinates only where valid; omit empty/non-polygon clipping remnants; validate geometry.",
+    "limitations": "Generalised public-data demonstration. Simplification may remove small features and shift boundaries by approximately 50m. These are planning flood zones, not a property flood-risk or insurance assessment; use the official Flood Map for Planning for site decisions.",
     "attribution": "\u00c2\u00a9 Environment Agency copyright and/or database right 2025. All rights reserved.",
     "feature_count": 1110,
     "loaded": true,
@@ -116,7 +116,7 @@
       "site_area_ha",
       "source_url"
     ],
-    "transformations": "Select Bassetlaw, retain named fields, transform British National Grid to WGS84 using pyproj. Flood polygons clipped then simplified 5m in EPSG:27700. GIAS personal/contact fields discarded.",
+    "transformations": "Read published CSV representative-point coordinates; transform EPSG:27700 to EPSG:4326; retain site ID, name, reported planning status and individual update date; no boundaries inferred.",
     "limitations": "Representative points only, not allocation or site boundary polygons. Individual CSV records can be older than page update. Presence does not establish current consent, availability or a planning recommendation.",
     "attribution": "Contains public sector information licensed under the Open Government Licence v3.0. Contains Ordnance Survey data \u00c2\u00a9 Crown copyright and database right 2026.",
     "feature_count": 31,
@@ -148,7 +148,7 @@
       "service_type",
       "source_url"
     ],
-    "transformations": "Select Bassetlaw, retain named fields, transform British National Grid to WGS84 using pyproj. Flood polygons clipped then simplified 5m in EPSG:27700. GIAS personal/contact fields discarded.",
+    "transformations": "Select open establishments in Bassetlaw from the official public GIAS bulk ZIP; transform EPSG:27700 to EPSG:4326; remove personal/contact fields.",
     "limitations": "Only open educational establishments recorded within Bassetlaw. Not all public services. Straight-line distance is not travel time, admissions eligibility or school catchment. Coordinates originate in GIAS. No person-level fields retained.",
     "attribution": "Contains public sector information licensed under the Open Government Licence v3.0.",
     "feature_count": 61,

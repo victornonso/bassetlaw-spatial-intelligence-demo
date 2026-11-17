@@ -104,3 +104,13 @@ def test_planning_representative_point_is_proximity_not_intersection(client):
     assert planning["distance_m"] > 500
     assert planning["features"] == []
     assert "not a site boundary or allocation" in planning["summary"]
+
+def test_missing_green_data_does_not_report_zero_services(client):
+ result=client.get('/api/site-insight?lat=53.3&lon=-.9').json()
+ assert result['evidence']['greenspace']['count_within_2km'] is None
+
+def test_flood_zone_code_uses_source_field(client):
+ from app import main
+ polygon={'type':'Polygon','coordinates':[[[-1,53.2],[-.7,53.2],[-.7,53.5],[-1,53.5],[-1,53.2]]]}
+ write_layer(main.store.data_dir,'flood_zones',[feature('zone3',polygon,flood_zone='FZ3')])
+ assert 'Flood Zone 3' in client.get('/api/site-insight?lat=53.3&lon=-.9').json()['evidence']['flood']['summary']
