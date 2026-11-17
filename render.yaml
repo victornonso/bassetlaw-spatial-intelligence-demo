@@ -3,7 +3,7 @@ services:
     name: bassetlaw-spatial-intelligence-api
     runtime: python
     plan: free
-    buildCommand: pip install -e .
+    buildCommand: pip install -r requirements.txt && pip install --no-deps -e . && python backend/manage.py migrate && python backend/manage.py load
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
     healthCheckPath: /healthz
     envVars:
@@ -12,4 +12,4 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: CORS_ORIGINS
-        value: https://bassetlaw-demo.victorokeke.co.uk
+        value: https://bassetlaw-demo.victorokeke.co.uk,https://bassetlaw-spatial-intelligence-demo.vercel.app

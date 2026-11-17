@@ -84,12 +84,12 @@
       "source_url",
       "zone"
     ],
-    "transformations": "Follow EA pagination; repair geometry; clip to district; simplify at 50m in EPSG:27700; transform to EPSG:4326; round coordinates only where valid; omit empty/non-polygon clipping remnants; validate geometry.",
-    "limitations": "Generalised public-data demonstration. Simplification may remove small features and shift boundaries by approximately 50m. These are planning flood zones, not a property flood-risk or insurance assessment; use the official Flood Map for Planning for site decisions.",
+    "transformations": "Download all pages, repair geometry, clip to district, simplify 50m followed by geometry validation in EPSG:27700, transform to EPSG:4326 and repair.",
+    "limitations": "Generalised 50m demonstration snapshot; small features can be removed and boundaries shifted. Use the official Flood Map for Planning for real site assessment, not this prototype.",
     "attribution": "\u00c2\u00a9 Environment Agency copyright and/or database right 2025. All rights reserved.",
-    "feature_count": 1110,
+    "feature_count": 1086,
     "loaded": true,
-    "sha256": "238a879311a97f54d1c343f90a7ff4d5e77f266c8a13086ea585ad59ed495b30"
+    "sha256": "474d154c0d32e0e9677724003a8cb5af36566e6776d7c088c5c7f1f2527cb9a6"
   },
   {
     "id": "planning_context",

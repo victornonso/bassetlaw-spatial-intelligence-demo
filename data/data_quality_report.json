@@ -19,8 +19,8 @@
     },
     "flood_zones": {
       "status": "pass",
-      "feature_count": 1110,
-      "sha256": "238a879311a97f54d1c343f90a7ff4d5e77f266c8a13086ea585ad59ed495b30"
+      "feature_count": 1086,
+      "sha256": "474d154c0d32e0e9677724003a8cb5af36566e6776d7c088c5c7f1f2527cb9a6"
     },
     "planning_context": {
       "status": "pass",
