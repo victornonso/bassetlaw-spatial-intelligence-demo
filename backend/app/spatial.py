@@ -168,7 +168,7 @@ class Store:
                 summary = (f"This location intersects {len(found)} mapped feature(s). Review the source record."
                            if found else "No intersection with the loaded extract. This is not confirmation of no constraint or risk.")
             if key == "flood" and found:
-                zones = sorted({str(f["zone"]) for f in found if f.get("zone")})
+                zones = sorted({str(f.get("flood_zone",f.get("zone"))).replace("FZ", "") for f in found if f.get("flood_zone", f.get("zone"))})
                 if zones:
                     summary = "This location intersects Environment Agency Flood Zone " + " and ".join(zones) + " in the loaded extract."
             evidence[key] = {"title": title, "status": "available" if loaded else "unavailable",
@@ -179,7 +179,7 @@ class Store:
             rounded = round(distance) if distance is not None else None
             evidence[key] = {"title": title, "status": "available" if nearest else "unavailable",
                              "nearest": nearest, "distance_m": rounded,
-                             "count_within_2km": count,
+                             "count_within_2km": count if nearest and key == "services" else None,
                              "summary": (f"Nearest mapped feature: {nearest.get('name', 'Unnamed')} "
                                          f"(approximately {rounded:,} m straight-line distance)."
                                          if nearest else "No data loaded for this indicator")}

@@ -12,3 +12,9 @@ data/raw/
 *.log
 .coverage
 *.zip
+
+.cache/
+
+
+*.tsbuildinfo
+

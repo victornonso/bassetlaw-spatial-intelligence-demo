@@ -1,0 +1,36 @@
+{
+  "status": "pass",
+  "checks": [
+    "required identifiers",
+    "unique identifiers",
+    "valid nonempty geometry",
+    "WGS84 bounds"
+  ],
+  "layers": {
+    "admin_areas": {
+      "status": "pass",
+      "feature_count": 1,
+      "sha256": "ea745c609a573ab9acd1f8cd6414667f31a7e65786d9e71ad3a5b0c8872b7da8"
+    },
+    "wards": {
+      "status": "pass",
+      "feature_count": 25,
+      "sha256": "0c8ef9c29a8ed3d083f94c67033748bec2b258ce126f4800569950daca310dc8"
+    },
+    "flood_zones": {
+      "status": "pass",
+      "feature_count": 1110,
+      "sha256": "238a879311a97f54d1c343f90a7ff4d5e77f266c8a13086ea585ad59ed495b30"
+    },
+    "planning_context": {
+      "status": "pass",
+      "feature_count": 31,
+      "sha256": "03f3c36ea0910befb52684999c13eaf3b658cfb4b65031f23c4153b3d3c87a5e"
+    },
+    "services": {
+      "status": "pass",
+      "feature_count": 61,
+      "sha256": "997be5a125353510a40288a0a2190dee4935f842539f53de1f93974a8db431fe"
+    }
+  }
+}
