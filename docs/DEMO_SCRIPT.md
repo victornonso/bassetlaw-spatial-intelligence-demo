@@ -4,7 +4,7 @@
 
 Open Planning and Growth. Select Retford town centre, then enable Planning context. Say:
 
-This is an independent prototype using public data, rather than Bassetlaw's internal systems. Selecting a location combines ward context, mapped flood evidence and nearby school locations into one evidence record. The brownfield register adds context, but its representative points are not development boundaries or a planning recommendation.
+This is an independent prototype using public data. It does not represent Bassetlaw's internal systems. Selecting a location combines ward context, mapped flood evidence and nearby school locations into one evidence record. The brownfield register adds context, but its representative points are not development boundaries or a planning recommendation.
 
 Open a source link in Location Insight. Say:
 

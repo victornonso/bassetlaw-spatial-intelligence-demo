@@ -67,14 +67,22 @@ Ward boundaries are historical generalisations. Brownfield points are not site b
 
 ## Deployment and domain
 
-Target architecture: Vercel frontend, Render API, Supabase PostgreSQL/PostGIS. See docs/DEPLOYMENT.md and docs/DOMAIN_SETUP.md for actual status and provider-issued domain values. Never infer deployment success from configuration files. No paid hosting has been purchased. Free Render cold starts are a known interview-day risk; an always-on upgrade requires owner approval.
+Live site: https://bassetlaw-demo.victorokeke.co.uk. Deployed on Vercel with a Render API and Supabase PostgreSQL/PostGIS. See docs/DEPLOYMENT.md and docs/DOMAIN_SETUP.md for actual status and provider-issued domain values. Never infer deployment success from configuration files. No paid hosting has been purchased. Free Render cold starts are a known interview-day risk; an always-on upgrade requires owner approval.
+
+## Screenshot
+
+![Deployed Planning and Growth view](presentation_assets/site-preview.png)
 
 ## Interview materials
 
-presentation_assets/end-slide-copy.txt contains proposed presentation copy. The production screenshot and QR assets are gated on a working deployed HTTPS custom domain. A local preview is not a production screenshot. See docs/DEMO_SCRIPT.md for a concise walkthrough and likely panel questions.
+presentation_assets/ contains the deployed Planning & Growth screenshot, high-resolution PNG and SVG QR codes, and end-slide copy. QR codes were decoded and their public HTTPS target verified. See docs/DEMO_SCRIPT.md for a concise walkthrough and likely panel questions.
 
 ## Verified provider resources
 
 GitHub: https://github.com/victornonso/bassetlaw-spatial-intelligence-demo
 
 API: https://bassetlaw-spatial-intelligence-demo.onrender.com. Health, readiness (PostGIS mode) and a real Retford insight query verified on 17 November 2026. Supabase project reference awoaxaoypiofvyxdliak. The production frontend defaults to this verified public API URL; VITE_API_BASE_URL can override it. No database credential is committed.
+
+Full handover: docs/HANDOVER.md. Verification record: docs/QA.md.
+
+Download the interview pack from https://bassetlaw-demo.victorokeke.co.uk/downloads/interview-pack.zip. Read the rehearsal script on a phone at https://bassetlaw-demo.victorokeke.co.uk/downloads/rehearsal-script.txt.

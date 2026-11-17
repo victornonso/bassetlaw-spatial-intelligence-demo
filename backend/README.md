@@ -23,7 +23,7 @@ The migration creates a version record, source registry, primary keys and GiST i
 
 Set `DATABASE_URL` to activate PostGIS mode. `/readyz` executes a PostGIS connectivity check and verifies district data exists; `/healthz` is process liveness only. Failed readiness returns HTTP 503. The Render blueprint is configuration only, not evidence of deployment. A free sleeping service may cause cold starts and is not recommended for an interview without checking its latency beforehand. Paid service activation requires the owner's approval.
 
-`CORS_ORIGINS` is a comma-separated exact origin list. It must include the actual Vercel deployment origin and the custom domain; wildcard CORS is rejected at startup. Configure Render's Python version and start command from `render.yaml`. Confirm health and readiness independently after deploying. No production database, migrations or remote services are claimed provisioned by this README.
+`CORS_ORIGINS` is a comma-separated exact origin list. It must include the actual Vercel deployment origin and the custom domain; wildcard CORS is rejected at startup. Configure Render's Python version and start command from `render.yaml`. Confirm health and readiness independently after deploying. Production resources, applied migrations and verified endpoints are recorded in docs/DEPLOYMENT.md. The provisioning role is currently shared by ingestion and reads; separate roles are a documented hardening limitation.
 
 ## Tests and limits
 
