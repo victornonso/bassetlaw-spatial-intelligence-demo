@@ -1,0 +1,10 @@
+A working example of the approach
+
+Bassetlaw Spatial Intelligence Prototype
+From maps to decisions
+bassetlaw-demo.victorokeke.co.uk
+Scan to explore
+
+Independent interview prototype. Not an official Bassetlaw District Council service.
+
+Publication gate: do not add a QR or present this domain as live until the deployed app and HTTPS are verified.
