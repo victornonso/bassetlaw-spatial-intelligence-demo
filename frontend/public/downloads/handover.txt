@@ -53,7 +53,7 @@ Render Free can sleep and the provider warns of cold starts of 50 seconds or mor
 
 ## Verification
 
-Backend and pipeline: 25 tests passed, one isolated PostGIS test skipped because no TEST_DATABASE_URL was provided. Production PostGIS readiness and actual spatial results were separately verified. Frontend: six tests passed; lint, type checking and production build passed. See QA.md for exact commands and limitations. QR image decoding returned the intended custom-domain URL. The screenshot was captured from the deployed custom domain with a real Retford evidence result.
+Backend and pipeline: 25 tests passed, one isolated PostGIS test skipped because no TEST_DATABASE_URL was provided. Production PostGIS readiness and actual spatial results were separately verified. Frontend: seven tests passed; lint, type checking and production build passed. See QA.md for exact commands and limitations. QR image decoding returned the intended custom-domain URL. The screenshot was captured from the deployed custom domain with a real Retford evidence result.
 
 ## Known limitations
 

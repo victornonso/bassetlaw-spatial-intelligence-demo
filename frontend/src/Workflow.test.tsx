@@ -1,5 +1,5 @@
 import {describe,it,expect,vi,afterEach} from 'vitest';
-import {render,screen,fireEvent,waitFor} from '@testing-library/react';
+import {render,screen,fireEvent,waitFor,act} from '@testing-library/react';
 import {App} from './main';
 vi.mock('./SpatialMap',()=>({SpatialMap:({onSelect,onToggle,enabled}:{onSelect:(lat:number,lon:number)=>void;onToggle:(id:string)=>void;enabled:Set<string>})=><div aria-label="Map component"><button onClick={()=>onSelect(53.3044,-1.1249)}>Inspect point</button><button aria-pressed={enabled.has('wards')} onClick={()=>onToggle('wards')}>Ward layer</button></div>}));
 const result={location:{lat:53.3044,lon:-1.1249},area:{district:'Bassetlaw',ward:'Worksop'},evidence:{flood:{status:'unavailable',summary:'No data loaded for this indicator.'}},sources:[],method:{mode:'snapshot',distance:'Straight-line'}};
@@ -11,3 +11,19 @@ describe('Application workflow',()=>{
  it('updates layer visibility state at the map boundary',async()=>{fetchFixture();render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Planning & Growth'}));const toggle=await screen.findByRole('button',{name:'Ward layer'});expect(toggle).toHaveAttribute('aria-pressed','true');fireEvent.click(toggle);expect(toggle).toHaveAttribute('aria-pressed','false');});
 });
 
+
+describe('Concurrent location requests',()=>{
+ it('keeps the latest selected location when an older response arrives late',async()=>{
+  fetchFixture();const baseFetch=globalThis.fetch;const pending:Array<(value:Response)=>void>=[];
+  vi.stubGlobal('fetch',vi.fn((input:RequestInfo|URL,init?:RequestInit)=>String(input).includes('/api/site-insight')?new Promise<Response>(resolve=>pending.push(resolve)):baseFetch(input,init)));
+  render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Planning & Growth'}));
+  const places=screen.getByRole('combobox',{name:'Start with a place'});
+  fireEvent.change(places,{target:{value:'Worksop town centre'}});
+  fireEvent.change(places,{target:{value:'Retford town centre'}});
+  await waitFor(()=>expect(pending).toHaveLength(2));
+  await act(async()=>{pending[1]({ok:true,json:async()=>({...result,area:{district:'Bassetlaw',ward:'Latest selection'}})} as Response);});
+  expect(await screen.findByText('Latest selection')).toBeInTheDocument();
+  await act(async()=>{pending[0]({ok:true,json:async()=>({...result,area:{district:'Bassetlaw',ward:'Stale selection'}})} as Response);});
+  expect(screen.queryByText('Stale selection')).toBeNull();expect(screen.getByText('Latest selection')).toBeInTheDocument();
+ });
+});

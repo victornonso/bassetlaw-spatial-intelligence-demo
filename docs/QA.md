@@ -23,7 +23,7 @@ npm test
 npm run build
 ```
 
-Observed: six frontend tests passed. These mock the map boundary for unit-level workflow checks; actual MapLibre loading is verified in the browser separately. Vite emits a non-fatal size advisory for the lazy-loaded map chunk (about 1.06 MB uncompressed, 287 kB gzip). It is recorded, not hidden by increasing the warning limit.
+Observed: seven frontend tests passed. These mock the map boundary for unit-level workflow checks; actual MapLibre loading is verified in the browser separately. Vite emits a non-fatal size advisory for the lazy-loaded map chunk (about 1.06 MB uncompressed, 287 kB gzip). It is recorded, not hidden by increasing the warning limit.
 
 ## Live endpoint checks
 
@@ -51,3 +51,5 @@ scripts/release_assets.py first verified the public HTTPS target. It generated 3
 ## Boundaries of verification
 
 No GPU, medical data or RiskCal research repository changes are involved in this separate project. No fictional population, planning score or project boundary is used. Live production checks complement the skipped isolated PostGIS regression; they do not imply a comprehensive database integration test suite or uptime guarantee.
+
+A regression test also resolves two location requests in reverse order and verifies that the latest selection remains displayed. Community requests discard responses after the selected ward changes.
