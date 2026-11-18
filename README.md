@@ -23,7 +23,7 @@ Verified public CSS: https://www.bassetlaw.gov.uk/css/Bassetlaw-District-Council
 - Secondary #009494, RGB 0 148 148, `.backteal` and hover treatment.
 - System sans-serif typography, thin borders, white/off-white backgrounds, minimal corner rounding. Flood symbology uses a separate muted blue.
 
-The colour relationship is deliberate; the Council logo and official-service identity are not copied. See frontend/BRANDING.md.
+The colour relationship is deliberate. The Council logo supplied by Victor Okeke is used in the header alongside explicit independent-prototype labelling. See frontend/BRANDING.md.
 
 ## Local setup
 

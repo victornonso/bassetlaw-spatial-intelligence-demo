@@ -20,7 +20,7 @@ Python ingestion downloads authoritative public sources and validates identifier
 - Observed Bassetlaw public-site colours: #4D7A7A (RGB 77,122,122), #3E6362 (62,99,98) and #009494 (0,148,148). See frontend/BRANDING.md for official CSS selectors.
 - Arial/Helvetica system sans-serif; restrained typography, thin rules and conventional controls.
 - Approximately 71% map and 29% context panel on desktop. Stacked map and evidence on mobile; horizontal navigation remains scrollable.
-- No Council logo, generic dashboard tiles, gradients, glass effects, fake key performance indicators or black-box suitability score.
+- The supplied Council logo appears with clear independent-prototype labelling. No generic dashboard tiles, gradients, glass effects, fake key performance indicators or black-box suitability score.
 - Visible independent-project disclaimer, named-location alternative to map clicking, keyboard focus states and source attribution.
 
 ## Features built
