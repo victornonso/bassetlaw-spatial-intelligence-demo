@@ -64,7 +64,7 @@ The map and analytical-cell manifests refer to the same extract revision. `data/
 
 **Services:** this is a deliberately bounded educational-establishment example. A straight-line nearest-school distance is neither a walking/driving journey nor an admissions/catchment statement. Counts include only loaded open establishments in the district, and can omit nearer facilities outside the district. School capacity, quality, place availability, demographic demand and population are not inferred.
 
-**Community profiles:** derived area, mapped-school counts and school phase distribution are spatial summaries of this snapshot. No Census population, deprivation, housing need or accessibility score is invented.
+**Community profiles:** derived ward area, included school/college counts and education-phase distribution are spatial summaries of this snapshot. Counts refer to establishments, not pupils or places. "Not applicable" is retained as the source phase classification with an explanation. The arbitrary ward-reference-point nearest-service metric is not presented. A missing or failed educational dataset is never reported as a zero count. No Census population, deprivation, housing need or accessibility score is invented.
 
 ## Attribution and licensing checks
 

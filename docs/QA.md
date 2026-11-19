@@ -82,3 +82,14 @@ Production release `7c7e35b` was verified on the custom HTTPS domain. `/api/laye
 Three fresh-browser runs before and after release measured flood delivery. The previous whole-layer requests took 901, 1,267 and 905 milliseconds. The new manifest plus four initial viewport vector tiles completed in 175, 127 and 112 milliseconds, transferring approximately 162 kB per run. These are observed flood-delivery timings on this connection with services available, not full-page timings, a network-independent guarantee or a cold-start benchmark. Static flood display no longer depends on Render waking up.
 
 Production browser checks also forced the API unavailable: the detailed Retford analysis cell loaded successfully (about 268 kB compressed in that check), the map remained functional at district/detail scales, and mobile layout showed no horizontal body overflow. No application errors or map error notices were observed. The public site-preview asset and download pack were refreshed from the deployed application.
+
+
+## Location Insight and community wording review
+
+The evidence labels now name brownfield-register sites, river/sea flood zones and schools/colleges explicitly. Ward and source dates are visible; individual brownfield record dates are distinguished from catalogue/download dates. Distances are displayed once. Excluded green-space and strategic-site indicators are documented in Data & Method rather than occupying empty Location Insight sections. Calculation labels explain database/server/browser execution without implying a live provider data feed.
+
+Communities & Services is explicitly a ward education-establishment example, with ward area, included establishment count and education-phase chart. The arbitrary ward-reference-point distance and redundant category-count indicator were removed. The source “Not applicable” phase remains visible with an explanation. Missing/failed establishment data cannot produce a false zero count in browser fallback.
+
+Validation: 35 backend/pipeline tests passed with one isolated PostGIS test skipped (TEST_DATABASE_URL not supplied); 21 frontend tests passed. Ruff, frontend lint and production build passed. The existing Vite MapLibre size advisory and two existing Python test dependency deprecations remain. Additional regressions cover one-time distance display, source/record dates, exclusion versus failure, outside-zone wording, genuine zero subsets, and failed community data in fallback. Local real-data endpoint checks returned the updated titles and ward education profile.
+
+Native browser visual review remains unverified. After the owner restored Chrome, Computer Use stopped because it could not determine the current browser URL confidently enough to enforce its policy. No further UI input or alternative browser automation was attempted. Automated rendering, workflow, type, build and endpoint checks are recorded separately from a visual browser review.

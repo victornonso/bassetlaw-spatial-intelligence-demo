@@ -23,8 +23,8 @@ def client(tmp_path: Path, monkeypatch):
     write_layer(tmp_path, "admin_areas", [feature("test-district", polygon)])
     write_layer(tmp_path, "wards", [feature("test-ward", polygon)])
     write_layer(tmp_path, "flood_zones", [feature("test-flood", polygon)])
-    write_layer(tmp_path, "services", [feature("test-near", {"type": "Point", "coordinates": [-.9,53.3]}, service_type="School"),
-                                       feature("test-far", {"type": "Point", "coordinates": [-.8,53.4]}, service_type="School")])
+    write_layer(tmp_path, "services", [feature("test-near", {"type": "Point", "coordinates": [-.9,53.3]}, service_type="School", phase="Primary"),
+                                       feature("test-far", {"type": "Point", "coordinates": [-.8,53.4]}, service_type="School", phase="Primary")])
     (tmp_path / "dataset_registry.json").write_text(json.dumps([
         {"layer": "services", "name": "Synthetic test data", "licence": "Test only"}]))
     monkeypatch.setattr(main, "store", Store(tmp_path, database_url=""))
@@ -50,7 +50,7 @@ def test_nearest_distance_is_metric_and_missing_not_no_risk(client):
     result = client.get("/api/site-insight?lat=53.301&lon=-0.9").json()
     assert 100 < result["evidence"]["services"]["distance_m"] < 120
     assert result["evidence"]["planning"]["status"] == "unavailable"
-    assert result["evidence"]["planning"]["summary"] == "No data loaded for this indicator"
+    assert result["evidence"]["planning"]["unavailable_reason"] == "not_included"
     assert result["evidence"]["greenspace"]["distance_m"] is None
 
 
@@ -69,8 +69,12 @@ def test_features_bbox_and_unknown_layer(client):
 def test_community_counts_reproduce_feature_subset(client):
     body = client.get("/api/community/test-ward").json()
     assert body["indicators"][1]["value"] == 2
-    assert body["chart"]["items"] == [{"label": "School", "value": 2}]
-    assert "No population" in body["limitations"][0]
+    assert body["chart"]["items"] == [{"label": "Primary", "value": 2}]
+    assert "Population, deprivation" in body["limitations"][0]
+    assert len(body["indicators"]) == 2
+    assert body["indicators"][1]["label"] == "Schools and colleges in this ward"
+    assert body["method"]["mode"] == "snapshot"
+    assert body["service_status"] == "available"
 
 
 def test_not_ready_without_data(tmp_path, monkeypatch):
@@ -103,7 +107,27 @@ def test_planning_representative_point_is_proximity_not_intersection(client):
     assert planning["nearest"]["id"] == "brownfield"
     assert planning["distance_m"] > 500
     assert planning["features"] == []
-    assert "not a site boundary or allocation" in planning["summary"]
+    assert "not a site boundary or allocation" in planning["distance_basis"]
+    assert "straight-line" not in planning["summary"]  # Distance is displayed once, in its own field.
+    assert "brownfield register" in planning["summary"]
+
+
+def test_no_flood_intersection_is_not_no_risk(client):
+    from app import main
+    polygon = {'type':'Polygon','coordinates':[[[-1,53.2],[-.99,53.2],[-.99,53.21],[-1,53.21],[-1,53.2]]]}
+    write_layer(main.store.data_dir,'flood_zones',[feature('elsewhere',polygon,flood_zone='FZ2')])
+    flood = client.get('/api/site-insight?lat=53.3&lon=-.9').json()['evidence']['flood']
+    assert flood['status'] == 'available'
+    assert 'outside the Flood Zone 2 and 3 polygons' in flood['summary']
+    assert 'does not establish that there is no flood risk' in flood['summary']
+
+
+def test_missing_education_dataset_is_not_a_zero_ward_count(client):
+    from app import main
+    write_layer(main.store.data_dir,'services',[])
+    profile = client.get('/api/community/test-ward').json()
+    assert profile['service_status'] == 'not_included'
+    assert profile['indicators'][1]['value'] == 'Not included'
 
 def test_missing_green_data_does_not_report_zero_services(client):
  result=client.get('/api/site-insight?lat=53.3&lon=-.9').json()

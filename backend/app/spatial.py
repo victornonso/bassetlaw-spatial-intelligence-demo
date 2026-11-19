@@ -15,12 +15,12 @@ from shapely.geometry import Point, box, shape
 ROOT = Path(__file__).resolve().parents[2]
 LAYERS = {
     "admin_areas": "District boundary",
-    "wards": "Ward boundaries",
-    "services": "Public services",
-    "green_spaces": "Public green space",
-    "flood_zones": "Flood context",
-    "planning_context": "Planning context",
-    "strategic_sites": "Strategic locations",
+    "wards": "Wards (May 2024)",
+    "services": "Schools and colleges",
+    "green_spaces": "Green space",
+    "flood_zones": "River and sea flood zones",
+    "planning_context": "Brownfield register sites",
+    "strategic_sites": "Strategic development sites",
 }
 PROJECT = Transformer.from_crs(4326, 27700, always_xy=True).transform
 
@@ -168,43 +168,51 @@ class Store:
             raise ValueError("Select a location inside the loaded Bassetlaw district boundary.")
         ward = self.intersections("wards", point)
         evidence: dict[str, Any] = {}
-        for key, layer, title in [("flood", "flood_zones", "Flood context"),
-                                  ("planning", "planning_context", "Planning context"),
-                                  ("growth", "strategic_sites", "Growth context")]:
+        for key, layer, title in [("flood", "flood_zones", "River and sea flood zones"),
+                                  ("planning", "planning_context", "Nearby brownfield register site"),
+                                  ("growth", "strategic_sites", "Strategic development sites")]:
             loaded = self.count(layer) > 0
             if loaded and key in {"planning", "growth"} and self.geometry_types(layer) <= {"Point", "MultiPoint"}:
                 nearest, distance, _ = self.nearest(layer, point)
                 rounded = round(distance)
-                qualifier = " This is a representative point, not a site boundary or allocation."
+                label = "site in the loaded brownfield register" if key == "planning" else "strategic development location"
                 evidence[key] = {"title": title, "status": "available", "nearest": nearest,
                                  "distance_m": rounded, "features": [],
-                                 "summary": f"Nearest mapped context point: {nearest.get('name', 'Unnamed')} "
-                                            f"(approximately {rounded:,} m straight-line distance)." + qualifier}
+                                 "distance_basis": "Distance to the register's mapped point, not a site boundary or allocation."
+                                 if key == "planning" else "Distance to the published strategic development point.",
+                                 "summary": f"Nearest {label}: {nearest.get('name', 'Unnamed')}."}
                 continue
             found = self.intersections(layer, point) if loaded else []
-            summary = "No data loaded for this indicator"
+            summary = "Dataset not included in this prototype."
             if loaded:
                 summary = (f"This location intersects {len(found)} mapped feature(s). Review the source record."
                            if found else "No intersection with the loaded extract. This is not confirmation of no constraint or risk.")
             if key == "flood" and found:
                 zones = sorted({str(f.get("flood_zone",f.get("zone"))).replace("FZ", "") for f in found if f.get("flood_zone", f.get("zone"))})
                 if zones:
-                    summary = "This location intersects Environment Agency Flood Zone " + " and ".join(zones) + " in the loaded extract."
+                    label = "Zone " if len(zones) == 1 else "Zones "
+                    summary = "The selected point falls within Environment Agency Flood " + label + " and ".join(zones) + " in this dataset."
+            if key == "flood" and loaded and not found:
+                summary = ("The selected point is outside the Flood Zone 2 and 3 polygons in this dataset. "
+                           "This does not establish that there is no flood risk.")
             evidence[key] = {"title": title, "status": "available" if loaded else "unavailable",
-                             "summary": summary, "features": found}
+                             "summary": summary, "features": found,
+                             **({"unavailable_reason": "not_included"} if not loaded else {})}
         for key, layer, title in [("greenspace", "green_spaces", "Green space"),
-                                  ("services", "services", "Mapped services")]:
+                                  ("services", "services", "Nearby schools and colleges")]:
             nearest, distance, count = self.nearest(layer, point)
             rounded = round(distance) if distance is not None else None
+            label = "school or college in the loaded dataset" if key == "services" else "green space in the loaded dataset"
             evidence[key] = {"title": title, "status": "available" if nearest else "unavailable",
                              "nearest": nearest, "distance_m": rounded,
                              "count_within_2km": count if nearest and key == "services" else None,
-                             "summary": (f"Nearest mapped feature: {nearest.get('name', 'Unnamed')} "
-                                         f"(approximately {rounded:,} m straight-line distance)."
-                                         if nearest else "No data loaded for this indicator")}
+                             "summary": (f"Nearest {label}: {nearest.get('name', 'Unnamed')}."
+                                         if nearest else "Dataset not included in this prototype."),
+                             **({"unavailable_reason": "not_included"} if not nearest else {})}
         return {"location": {"lat": lat, "lon": lon},
                 "area": {"district": district[0].get("name", "Bassetlaw"),
-                         "ward": ward[0].get("name") if ward else None},
+                         "ward": ward[0].get("name") if ward else None,
+                         "ward_date": ward[0].get("geography_date") if ward else None},
                 "evidence": evidence,
                 "sources": self.sources(list(LAYERS)),
                 "method": {"mode": self.mode, "distance": "British National Grid Euclidean distance (EPSG:27700)",
@@ -217,23 +225,18 @@ class Store:
             return None
         polygon = shape(area["geometry"])
         services = [f for f in self.features("services") if polygon.intersects(shape(f["geometry"]))]
-        categories = Counter(f["properties"].get("category") or f["properties"].get("service_type", "Mapped service")
+        loaded = self.count("services") > 0
+        categories = Counter(f["properties"].get("phase") or f["properties"].get("category") or "Not recorded"
                              for f in services)
-        representative = polygon.representative_point()
-        nearest, distance, _ = self.nearest("services", representative)
         indicators = [{"label": "Ward area", "value": round(transform(PROJECT, polygon).area / 1e6, 2),
-                       "unit": "km²", "description": "Calculated from the loaded ward boundary"},
-                      {"label": "Mapped services within ward", "value": len(services), "unit": "locations",
-                       "description": "Only the loaded service extract; not all council services"},
-                      {"label": "Service categories", "value": len(categories), "unit": "types",
-                       "description": "Categories in the loaded extract"}]
-        if nearest is not None:
-            indicators.append({"label": "Nearest service from ward reference point", "value": round(distance),
-                               "unit": "m", "description": "Straight-line distance from an interior reference point, not a population-weighted measure"})
+                       "unit": "km²", "description": "Calculated from the included ward boundary."},
+                      {"label": "Schools and colleges in this ward", "value": len(services) if loaded else "Not included",
+                       "unit": "establishments" if loaded else "",
+                       "description": "Establishments recorded as open in the downloaded dataset, located within this ward boundary."}]
         return {"area": area["properties"], "indicators": indicators,
-                "chart": {"title": "Mapped services within this ward by type",
+                "chart": {"title": "Schools and colleges by education phase",
                           "items": [{"label": k, "value": v} for k, v in sorted(categories.items())]},
                 "sources": self.sources(["wards", "services"]),
-                "limitations": ["No population, deprivation or housing-need values have been inferred.",
-                                "Mapped-service counts depend on the scope and currency of the source extract.",
-                                "Geographic proximity does not measure capacity, eligibility, transport routes or access needs."]}
+                "service_status": "available" if loaded else "not_included", "method": {"mode": self.mode},
+                "limitations": ["Population, deprivation and housing-need data are not included in this profile.",
+                                "This dataset includes establishments within Bassetlaw; facilities outside the district are not included."]}

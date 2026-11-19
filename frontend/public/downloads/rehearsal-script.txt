@@ -6,7 +6,7 @@ A map-led public-data application demonstrating how governed spatial evidence ca
 
 ## Product
 
-Planning and Growth combines ward context, Environment Agency flood intersections, nearest mapped schools and brownfield-register representative-point context. Every result carries sources. Missing indicators are explicitly unavailable. Communities shows calculated ward area and counts of loaded schools by educational phase, with a restrained bar chart. Strategic Change explains common identifiers and data exchange without pretending to reproduce internal systems.
+Planning and Growth combines ward context, Environment Agency flood intersections, nearest included schools and colleges and brownfield-register representative-point context. Every result carries sources. Datasets excluded from the prototype are documented in Data & Method; temporary evidence failures are identified separately. Communities shows calculated ward area and counts of included schools and colleges by education phase, with a restrained bar chart. Strategic Change explains common identifiers and data exchange without pretending to reproduce internal systems.
 
 The spatial workspace is about 70% map and 30% evidence panel on desktop, with stacked mobile layout. Controls use conventional checkboxes, a persistent legend, named-location alternatives and reset view. No accounts, tracking cookies, suitability scores or invented population figures are used.
 

@@ -26,8 +26,8 @@ Python ingestion downloads authoritative public sources and validates identifier
 ## Features built
 
 - Planning & Growth: pan/zoom, reset, layer toggles, direct point and ward inspection, named-place selection and a structured Location Insight record.
-- Real ward intersections, flood intersections, nearest historical brownfield-register point, nearest mapped school and count within two kilometres.
-- Communities & Services: select a ward, calculate its area, count mapped schools, show school-phase distribution and nearest service from an interior ward reference point.
+- Real ward intersections, flood intersections, nearest historical brownfield-register point, nearest included school or college and count within two kilometres.
+- Communities & Services: select a ward, calculate its area, count included schools and colleges, and show their education-phase distribution using dated ward boundaries.
 - Strategic Change: a conceptual integration flow, with Unique Property Reference Number (UPRN) and Unique Street Reference Number (USRN) explanations. It makes no assertion about Bassetlaw's internal systems.
 - Data & Method: provider, licence, retrieval date, attribution, method and limitations.
 - Reproducible ingestion, versioned migrations, source hashes, validation report, error handling and public-snapshot fallback.
@@ -53,7 +53,7 @@ Render Free can sleep and the provider warns of cold starts of 50 seconds or mor
 
 ## Verification
 
-Backend and pipeline: 33 tests passed, one isolated PostGIS test skipped because no TEST_DATABASE_URL was provided. Production PostGIS readiness and actual spatial results were separately verified. Frontend: 13 tests passed; lint, type checking and production build passed. See QA.md for exact commands and limitations. QR image decoding returned the intended custom-domain URL. The screenshot was captured from the deployed custom domain with a real Retford evidence result.
+Backend and pipeline: 35 tests passed, one isolated PostGIS test skipped because no TEST_DATABASE_URL was provided. Production PostGIS readiness and actual spatial results were separately verified. Frontend: 21 tests passed; lint, type checking and production build passed. See QA.md for exact commands and limitations. QR image decoding returned the intended custom-domain URL. The screenshot was captured from the deployed custom domain with a real Retford evidence result.
 
 ## Known limitations
 

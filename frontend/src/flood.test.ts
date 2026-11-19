@@ -1,10 +1,10 @@
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
-import {snapshotInsight} from './api';
+import {snapshotInsight,collectionCache} from './api';
 
 const empty={type:'FeatureCollection',features:[]};
 const tiny={type:'FeatureCollection',features:[{type:'Feature',properties:{id:'tiny',name:'Flood Zone 2'},geometry:{type:'Polygon',coordinates:[[[-.9,53.3],[-.899999,53.3],[-.899999,53.300001],[-.9,53.300001],[-.9,53.3]]]}}]};
 function cell(lat:number,lon:number){const n=2**13;return `${Math.floor((lon+180)/360*n)}/${Math.floor((1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n)}`;}
-beforeEach(()=>vi.resetModules());
+beforeEach(()=>{vi.resetModules();Object.keys(collectionCache).forEach(key=>delete collectionCache[key]);});
 afterEach(()=>vi.unstubAllGlobals());
 describe('Detailed flood snapshot',()=>{
  it('retains vector tile coordinate placeholders when resolving the source URL',async()=>{
@@ -35,7 +35,7 @@ describe('Detailed flood snapshot',()=>{
  });
  it('uses detailed cells for fallback classification and never requests the whole flood layer',async()=>{
   const key=cell(53.3000005,-.8999995);
-  const fetcher=vi.fn(async(url:string)=>({ok:true,json:async()=>url==='/data/flood-analysis.json'?{zoom:13,cells:[key],feature_count:1,template:'/cell/{x}/{y}.geojson'}:url.startsWith('/cell/')?tiny:url.includes('dataset_registry')?[]:empty}));
+  const fetcher=vi.fn(async(url:string)=>({ok:true,json:async()=>url==='/data/flood-analysis.json'?{zoom:13,cells:[key],feature_count:1,template:'/cell/{x}/{y}.geojson'}:url.startsWith('/cell/')?tiny:url.includes('dataset_registry')?[]:url.includes('admin_areas')?{type:'FeatureCollection',features:[{type:'Feature',properties:{id:'district'},geometry:{type:'Polygon',coordinates:[[[-1,53],[-.8,53],[-.8,53.5],[-1,53.5],[-1,53]]]}}]}:empty}));
   vi.stubGlobal('fetch',fetcher);
   const result=await snapshotInsight(53.3000005,-.8999995);
   expect(result.evidence.flood.status).toBe('available');
