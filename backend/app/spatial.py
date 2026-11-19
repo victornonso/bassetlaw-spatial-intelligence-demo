@@ -1,6 +1,7 @@
 """Data access and reproducible spatial methods. No inferred negative risk results."""
 from __future__ import annotations
 
+import gzip
 import json
 import os
 from collections import Counter
@@ -68,11 +69,14 @@ class Store:
                 return [{"type": "Feature", "id": r[0], "properties": r[1], "geometry": r[2]} for r in rows]
         path = self.data_dir / f"{layer}.geojson"
         if not path.exists():
+            path = path.with_suffix(".geojson.gz")
+        if not path.exists():
             return []
         stat = path.stat()
         modified = (stat.st_mtime_ns, stat.st_size)
         if layer not in self._cache or self._mtimes.get(layer) != modified:
-            self._cache[layer] = json.loads(path.read_text(encoding="utf-8-sig"))["features"]
+            content = gzip.decompress(path.read_bytes()) if path.suffix == ".gz" else path.read_bytes()
+            self._cache[layer] = json.loads(content.decode("utf-8-sig"))["features"]
             self._mtimes[layer] = modified
         features = self._cache[layer]
         if bbox:
@@ -97,6 +101,14 @@ class Store:
     def intersections(self, layer: str, point: Point) -> list[dict[str, Any]]:
         if self.database_url:
             with self.connection() as conn:
+                if layer == "flood_zones":
+                    rows = conn.execute(
+                        "SELECT DISTINCT f.feature_id,f.properties FROM spatial_feature_parts p "
+                        "JOIN spatial_features f USING(layer,feature_id) WHERE p.layer=%s AND "
+                        "ST_Intersects(p.geom,ST_SetSRID(ST_Point(%s,%s),4326)) ORDER BY f.feature_id",
+                        (layer, point.x, point.y),
+                    ).fetchall()
+                    return [r[1] for r in rows]
                 rows = conn.execute(
                     "SELECT properties FROM spatial_features WHERE layer=%s AND "
                     "ST_Intersects(geom, ST_SetSRID(ST_Point(%s,%s),4326)) ORDER BY feature_id",
@@ -136,6 +148,13 @@ class Store:
             with self.connection() as conn:
                 conn.execute("SELECT PostGIS_Version()")
                 count = conn.execute("SELECT count(*) FROM spatial_features WHERE layer='admin_areas'").fetchone()[0]
+                missing = conn.execute(
+                    "SELECT EXISTS(SELECT 1 FROM spatial_features f WHERE f.layer='flood_zones' "
+                    "AND NOT EXISTS(SELECT 1 FROM spatial_feature_parts p "
+                    "WHERE p.layer=f.layer AND p.feature_id=f.feature_id))"
+                ).fetchone()[0]
+                if missing:
+                    return False, "Detailed flood analysis index not loaded"
                 return bool(count), "PostGIS connected; district data loaded" if count else "District data not loaded"
         return bool(self.features("admin_areas")), "Local public-data snapshot mode; PostGIS is not configured"
 

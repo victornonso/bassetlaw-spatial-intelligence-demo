@@ -16,7 +16,7 @@ The repository main branch triggers both production deployments. Vercel uses the
 
 ## Database and API
 
-The versioned migration enables PostGIS, creates registry/feature tables and spatial GiST indexes. The loader validates snapshots and loads them transactionally. Production readiness has been observed in postgis mode, and actual location intersection, nearest-school distance and ward-profile queries have returned data. Health and readiness are separate endpoints:
+The versioned migrations enable PostGIS, create registry/feature tables and spatial GiST indexes, and add indexed, source-detail flood subdivisions. The loader validates snapshots and loads them transactionally. Production readiness has been observed in postgis mode, and actual location intersection, nearest-school distance and ward-profile queries have returned data. Health and readiness are separate endpoints:
 
 - /healthz: process liveness
 - /readyz: database connectivity, PostGIS and district-data presence
@@ -41,7 +41,7 @@ The bounded prototype currently uses the provisioning database role for migratio
 
 All newly created resources use free plans. No recurring paid service was purchased. Existing personal-domain renewal remains the owner's existing arrangement. Free Render services sleep and the dashboard warns that cold starts can take 50 seconds or more. Supabase Free can also pause after inactivity. Open the site before the interview and check readiness; do not depend on this as an uptime guarantee. For guaranteed availability, obtain approval for the smallest always-on Render plan actually offered by the provider. No automatic paid upgrade is configured.
 
-A ten-second frontend timeout uses packaged public snapshots when the API is unavailable. Analysis mode is clearly labelled; fallback computes real intersections and straight-line geodesic distances over the documented extracts, whereas PostGIS uses British National Grid planar measurements. The map and source register remain useful. Public OpenStreetMap tiles are an external dependency and this is a low-volume demonstration, not a high-traffic service.
+A ten-second frontend timeout uses packaged public snapshots when the API is unavailable. Flood display uses static vector tiles on Vercel. Flood analysis uses the unsimplified extract in PostGIS or one selected analytical cell in browser fallback. Analysis mode is clearly labelled; fallback computes real intersections and straight-line geodesic distances over the documented extracts, whereas PostGIS uses British National Grid planar measurements. The map and source register remain useful. Public OpenStreetMap tiles are an external dependency and this is a low-volume demonstration, not a high-traffic service.
 
 ## Domain safety
 

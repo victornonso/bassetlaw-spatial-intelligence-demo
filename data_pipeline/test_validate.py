@@ -16,17 +16,11 @@ def test_empty():
  with pytest.raises(ValueError):validate(f)
 
 
-def test_generalisation_omits_collapsed_polygon(tmp_path,monkeypatch):
- import json
- import data_pipeline.validate as module
- from shapely.geometry import box,mapping
- monkeypatch.setattr(module,'ROOT',tmp_path)
- (tmp_path/'data').mkdir()
- (tmp_path/'.cache/public-data').mkdir(parents=True)
- boundary={'type':'FeatureCollection','features':[{'geometry':mapping(box(-1.1,53.2,-.9,53.4))}]}
- (tmp_path/'data/admin_areas.geojson').write_text(json.dumps(boundary))
- raw=[{'geometry':mapping(box(-1,53.3,-.999999,53.300001)),'properties':{'flood_zone':'FZ2'}}]
- (tmp_path/'.cache/public-data/flood.json').write_text(json.dumps(raw))
- module.compact_flood()
- result=json.loads((tmp_path/'data/flood_zones.geojson').read_text())
- assert result['features']==[]
+def test_tiny_flood_polygon_is_retained_without_simplification():
+ from shapely.geometry import box,mapping,shape
+ from data_pipeline.flood import extract
+ tiny=box(-1,53.3,-.999999,53.300001)
+ result=extract([{'geometry':mapping(tiny),'properties':{'flood_zone':'FZ2'}}],box(-1.1,53.2,-.9,53.4))
+ assert len(result['features'])==1
+ assert shape(result['features'][0]['geometry']).equals(tiny)
+ assert result['features'][0]['properties']['generalisation_m']==0

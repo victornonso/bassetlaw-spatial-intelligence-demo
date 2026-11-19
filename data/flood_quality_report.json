@@ -1,0 +1,25 @@
+{
+  "status": "pass",
+  "source_sha256": "ed38b0e3ce73ffcc8d9b55e0a2312621194f48e08f7f6ea1c61b4b9242bd8b12",
+  "analysis_sha256": "b22727370f98ccbc97676ac2c45575cb6e8abe0eedc47d9151ddb7446be133b3",
+  "revision": "b22727370f98",
+  "source_features": 3880,
+  "analysis_features": 2409,
+  "simplification_m": 0,
+  "minimum_area_filter": null,
+  "map_quantisation_extent": 8192,
+  "map_maxzoom": 14,
+  "map_simplification": "Global dissolved display coverage; topology-preserving 1/8 screen pixel at each zoom; never used for analysis",
+  "map_tiles": 755,
+  "map_bytes": 3033804,
+  "max_map_tile_bytes": 89272,
+  "analysis_cells": 97,
+  "max_analysis_cell_gzip_bytes": 314906,
+  "source_fidelity_audit": {
+    "source_records_compared": 2409,
+    "invalid_source_records_repaired": 73,
+    "changed_polygonal_extent_records": 0,
+    "analytical_cell_points_checked": 302,
+    "analytical_cell_disagreements": 0
+  }
+}

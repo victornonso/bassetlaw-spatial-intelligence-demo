@@ -1,11 +1,9 @@
 """Validate and compact licensed GeoJSON snapshots before release."""
-import hashlib,json
+import gzip,hashlib,json
 from pathlib import Path
-from shapely import make_valid
-from shapely.geometry import shape,mapping
+from shapely.geometry import shape
 from shapely import transform as vector_transform
 def transform(fn,g): return vector_transform(g,fn,interleaved=False)
-from pyproj import Transformer
 ROOT=Path(__file__).resolve().parents[1]
 def validate(fc):
     seen=set()
@@ -19,36 +17,23 @@ def validate(fc):
         if not(-180<=x<=X<=180 and -90<=y<=Y<=90):raise ValueError('Expected WGS84')
     return len(seen)
 def compact_flood():
-    src=ROOT/'.cache/public-data/flood.json'
-    raw=json.loads(src.read_text())
-    if isinstance(raw,dict):raw=raw['features']
-    district=shape(json.loads((ROOT/'data/admin_areas.geojson').read_text())['features'][0]['geometry'])
-    forward=Transformer.from_crs(4326,27700,always_xy=True).transform
-    back=Transformer.from_crs(27700,4326,always_xy=True).transform
-    boundary=transform(forward,district); groups={}
-    for f in raw:
-        g=make_valid(transform(forward,shape(f['geometry'])))
-        if g.intersects(boundary):groups.setdefault(f['properties']['flood_zone'],[]).append(g.intersection(boundary))
-    features=[]
-    for zone,geoms in sorted(groups.items()):
-        for i,g in enumerate(geoms):
-            if g.is_empty:continue
-            g=make_valid(transform(back,g.simplify(50,preserve_topology=False)))
-            if g.is_empty or g.geom_type not in ['Polygon','MultiPolygon']:continue
-            features.append({'type':'Feature','geometry':mapping(g),'properties':{'id':f'{zone}-{i}','name':'Flood Zone '+zone.replace('FZ',''),'flood_zone':zone,'provider':'Environment Agency','generalisation_m':50}})
-    fc={'type':'FeatureCollection','features':features};validate(fc)
-    (ROOT/'data/flood_zones.geojson').write_text(json.dumps(fc,separators=(',',':')),encoding='utf-8')
+    # Retained CLI entry point: compact delivery, never compact analytical geometry.
+    from .flood import build
+    return build(ROOT)
 def report():
     registry=json.loads((ROOT/'data/dataset_registry.json').read_text())
     results={}
     for r in registry:
         p=ROOT/'data'/f"{r['id']}.geojson"
+        if not p.exists():p=p.with_suffix('.geojson.gz')
         if not p.exists():continue
-        fc=json.loads(p.read_text(encoding='utf-8-sig'));count=validate(fc)
+        content=gzip.decompress(p.read_bytes()) if p.suffix=='.gz' else p.read_bytes()
+        fc=json.loads(content.decode('utf-8-sig'));count=validate(fc)
         r['feature_count']=count;r['sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
         if r['id']=='flood_zones':
-            r['transformations']='Download all pages, repair geometry, clip to district, simplify 50m followed by geometry validation in EPSG:27700, transform to EPSG:4326 and repair.'
-            r['limitations']='Generalised 50m demonstration snapshot; small features can be removed and boundaries shifted. Use the official Flood Map for Planning for real site assessment, not this prototype.'
+            r['transformations']='Download all pages; repair invalid source geometry; clip to district in EPSG:4326; retain all polygon components and holes without simplification or area filtering. Losslessly compress analytical GeoJSON. Generate separate quantised vector display tiles and unsimplified analytical cells.'
+            r['limitations']='Public snapshot of rivers and sea planning flood zones, not a property-level flood assessment or all-source flood risk. District clipping uses a historical generalised boundary. Display tiles are quantised by zoom; analytical intersections use source-detail geometry. Consult the official Flood Map for Planning for actual decisions.'
+            r['analysis_generalisation_m']=0
         results[r['id']]={'status':'pass','feature_count':count,'sha256':r['sha256']}
     (ROOT/'data/dataset_registry.json').write_text(json.dumps(registry,indent=2),encoding='utf-8')
     (ROOT/'data/data_quality_report.json').write_text(json.dumps({'status':'pass','checks':['required identifiers','unique identifiers','valid nonempty geometry','WGS84 bounds'],'layers':results},indent=2),encoding='utf-8')

@@ -31,7 +31,7 @@ Python 3.11+ and Node.js 22+ are required. From this directory:
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\python -m pip install -e '.[dev]'
+.venv\Scripts\python -m pip install -e '.[dev,pipeline]'
 .venv\Scripts\python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
@@ -63,7 +63,7 @@ The GIAS national ZIP uses the official bulk-download workflow; supply a downloa
 
 See docs/DATA_SOURCES.md and the machine-readable data/dataset_registry.json for endpoints, licences, retrieval dates, vintage, fields, transformations and limitations. The current extracts comprise ONS historical 2024 boundaries, EA Flood Map for Planning, Bassetlaw brownfield-register points and DfE public school locations. Basemap: OpenStreetMap contributors (ODbL); respect the public tile service policy https://operations.osmfoundation.org/policies/tiles/. This small interview demo is not configured for high-volume public traffic.
 
-Ward boundaries are historical generalisations. Brownfield points are not site boundaries, planning allocations or evidence of current permission. School proximity does not indicate catchment entitlement, capacity or quality. Flood polygons are generalised for this demonstration; always consult official planning evidence for a real site. No green-space or Census indicator is shown without a loaded dataset. No restricted OS data is used.
+Ward boundaries are historical generalisations. Brownfield points are not site boundaries, planning allocations or evidence of current permission. School proximity does not indicate catchment entitlement, capacity or quality. Flood analysis retains source detail, with separate zoom-dependent vector tiles for display; always consult official planning evidence for a real site. No green-space or Census indicator is shown without a loaded dataset. No restricted OS data is used.
 
 ## Deployment and domain
 

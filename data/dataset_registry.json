@@ -84,12 +84,13 @@
       "source_url",
       "zone"
     ],
-    "transformations": "Download all pages, repair geometry, clip to district, simplify 50m followed by geometry validation in EPSG:27700, transform to EPSG:4326 and repair.",
-    "limitations": "Generalised 50m demonstration snapshot; small features can be removed and boundaries shifted. Use the official Flood Map for Planning for real site assessment, not this prototype.",
+    "transformations": "Download all pages; repair invalid source geometry; clip to district in EPSG:4326; retain all polygon components and holes without simplification or area filtering. Losslessly compress analytical GeoJSON. Generate separate quantised vector display tiles and unsimplified analytical cells.",
+    "limitations": "Public snapshot of rivers and sea planning flood zones, not a property-level flood assessment or all-source flood risk. District clipping uses a historical generalised boundary. Display tiles are quantised by zoom; analytical intersections use source-detail geometry. Consult the official Flood Map for Planning for actual decisions.",
     "attribution": "\u00c2\u00a9 Environment Agency copyright and/or database right 2025. All rights reserved.",
-    "feature_count": 1086,
+    "feature_count": 2409,
     "loaded": true,
-    "sha256": "474d154c0d32e0e9677724003a8cb5af36566e6776d7c088c5c7f1f2527cb9a6"
+    "sha256": "20b94fe2ab4c76c0b0ea5e0ae17b37e2e14a6bc4e08591556b2d4eb8905a9d5a",
+    "analysis_generalisation_m": 0
   },
   {
     "id": "planning_context",

@@ -8,6 +8,7 @@ from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
 from .spatial import LAYERS, Store, identifier
@@ -19,6 +20,7 @@ origins = [x.strip() for x in os.getenv(
 if "*" in origins:
     raise RuntimeError("Wildcard CORS is not permitted")
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET"], allow_headers=["Content-Type"])
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 store = Store()
 log = logging.getLogger(__name__)
 

@@ -1,0 +1,44 @@
+{
+  "source": "Environment Agency Flood Map for Planning",
+  "licence": "Open Government Licence",
+  "source_sha256": "ed38b0e3ce73ffcc8d9b55e0a2312621194f48e08f7f6ea1c61b4b9242bd8b12",
+  "method": "Interior points from the repaired, clipped source geometry nearest Retford and Worksop that the previous 50m derivative omitted. No site assessment is implied.",
+  "points": [
+    {
+      "near": "Retford",
+      "lat": 53.3242815,
+      "lon": -0.9430655000000001,
+      "expected_zones": [
+        "FZ2"
+      ],
+      "previous_intersection": false
+    },
+    {
+      "near": "Retford",
+      "lat": 53.324388,
+      "lon": -0.9441134435985121,
+      "expected_zones": [
+        "FZ3"
+      ],
+      "previous_intersection": false
+    },
+    {
+      "near": "Worksop",
+      "lat": 53.3039155,
+      "lon": -1.1245479999999999,
+      "expected_zones": [
+        "FZ2"
+      ],
+      "previous_intersection": false
+    },
+    {
+      "near": "Worksop",
+      "lat": 53.3037935,
+      "lon": -1.1249704907407407,
+      "expected_zones": [
+        "FZ2"
+      ],
+      "previous_intersection": false
+    }
+  ]
+}

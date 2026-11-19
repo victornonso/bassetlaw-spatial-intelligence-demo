@@ -53,3 +53,25 @@ scripts/release_assets.py first verified the public HTTPS target. It generated 3
 No GPU, medical data or RiskCal research repository changes are involved in this separate project. No fictional population, planning score or project boundary is used. Live production checks complement the skipped isolated PostGIS regression; they do not imply a comprehensive database integration test suite or uptime guarantee.
 
 A regression test also resolves two location requests in reverse order and verifies that the latest selection remains displayed. Community requests discard responses after the selected ward changes.
+
+
+## Flood geometry correction
+
+Analytical geometry no longer uses the former 50-metre display derivative. The same source snapshot now retains 2,409 polygonal records with no analytical simplification or area filtering. Seventy-three invalid source records were repaired. An independent per-record comparison against the repaired and district-clipped source found zero changes in polygonal extent across all 2,409 records. Analytical browser cells agreed at 302 deterministic source interior/boundary points. See `data/flood_quality_report.json`.
+
+The map uses a separate dissolved, topology-preserving, zoom-dependent display derivative, delivered as 755 vector tiles (3,033,804 bytes total; largest individual tile 89,272 bytes). It no longer fetches whole-district flood GeoJSON. Browser fallback loads only the selected unsimplified analytical cell. The maximum compressed analytical cell is 314,906 bytes. These are artifact measurements, not network timings.
+
+Commands after the change:
+
+```powershell
+.venv/Scripts/python -m pip install -e '.[dev,pipeline]'
+.venv/Scripts/python -m data_pipeline.flood
+.venv/Scripts/python -m data_pipeline.validate
+.venv/Scripts/python -m data_pipeline.audit_flood
+.venv/Scripts/python -m pytest -q tests/backend data_pipeline/test_validate.py data_pipeline/test_flood.py
+.venv/Scripts/python -m ruff check backend tests/backend data_pipeline/flood.py data_pipeline/audit_flood.py data_pipeline/test_flood.py
+```
+
+Observed: 33 backend/pipeline tests passed; one disposable PostGIS test remains skipped without TEST_DATABASE_URL. The four public-source regression points near Retford and Worksop now retain flood extents omitted by the old derivative. Frontend: 13 tests passed, including vector source selection, tile-template handling, detailed fallback classification, failed-cell behaviour and empty-cell availability. Production build passed with the existing MapLibre size advisory. Existing test-harness deprecation and vector-encoder Shapely deprecation warnings remain; neither is a runtime failure.
+
+Local browser verification exercised district/detail views, layer toggling, zooming and a mobile viewport with the API deliberately unavailable. Real vector tiles and a detailed analytical cell loaded; no application errors, map notices or body overflow were observed. Source detail remains visibly more complex than the former derivative; genuine disconnected areas and holes are retained rather than cosmetically deleted.

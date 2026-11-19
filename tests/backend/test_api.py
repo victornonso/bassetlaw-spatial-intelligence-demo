@@ -114,3 +114,16 @@ def test_flood_zone_code_uses_source_field(client):
  polygon={'type':'Polygon','coordinates':[[[-1,53.2],[-.7,53.2],[-.7,53.5],[-1,53.5],[-1,53.2]]]}
  write_layer(main.store.data_dir,'flood_zones',[feature('zone3',polygon,flood_zone='FZ3')])
  assert 'Flood Zone 3' in client.get('/api/site-insight?lat=53.3&lon=-.9').json()['evidence']['flood']['summary']
+
+
+def test_losslessly_compressed_detailed_flood_snapshot(tmp_path):
+    import gzip
+
+    from shapely.geometry import Point
+    polygon = {'type':'Polygon','coordinates':[[[-.9,53.3],[-.899999,53.3],
+               [-.899999,53.300001],[-.9,53.300001],[-.9,53.3]]]}
+    document = {'type':'FeatureCollection','features':[feature('tiny',polygon,flood_zone='FZ2')]}
+    (tmp_path / 'flood_zones.geojson.gz').write_bytes(gzip.compress(json.dumps(document).encode()))
+    store = Store(tmp_path, database_url='')
+    assert store.intersections('flood_zones',Point(-.8999995,53.3000005))[0]['id'] == 'tiny'
+    assert store.intersections('flood_zones',Point(-.899998,53.3000005)) == []

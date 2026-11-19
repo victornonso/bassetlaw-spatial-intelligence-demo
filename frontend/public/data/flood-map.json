@@ -1,0 +1,1 @@
+{"tilejson":"3.0.0","name":"Environment Agency flood zones","scheme":"xyz","tiles":["/data/flood-map/b22727370f98/{z}/{x}/{y}.pbf"],"minzoom":8,"maxzoom":14,"bounds":[-1.213027,53.196681,-0.747871,53.502517],"attribution":"\u00a9 Environment Agency; Open Government Licence","revision":"b22727370f98","feature_count":2409}

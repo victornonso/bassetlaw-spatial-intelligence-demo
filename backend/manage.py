@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import os
 from pathlib import Path
@@ -32,8 +33,11 @@ def load(database_url: str, data_dir: Path) -> None:
             continue
         source = data_dir / f"{layer}.geojson"
         if not source.exists():
+            source = source.with_suffix(".geojson.gz")
+        if not source.exists():
             continue
-        document = json.loads(source.read_text(encoding="utf-8-sig"))
+        content = gzip.decompress(source.read_bytes()) if source.suffix == ".gz" else source.read_bytes()
+        document = json.loads(content.decode("utf-8-sig"))
         if document.get("type") != "FeatureCollection":
             raise ValueError(f"{layer}: expected FeatureCollection")
         identifiers = set()
@@ -65,7 +69,13 @@ def load(database_url: str, data_dir: Path) -> None:
                 cursor.executemany(
                     "INSERT INTO spatial_features(layer,feature_id,properties,geom) "
                     "VALUES(%s,%s,%s,ST_SetSRID(ST_GeomFromGeoJSON(%s),4326))", rows)
+            if layer == "flood_zones":
+                connection.execute(
+                    "INSERT INTO spatial_feature_parts(layer,feature_id,geom) "
+                    "SELECT f.layer,f.feature_id,p.geom FROM spatial_features f "
+                    "CROSS JOIN LATERAL ST_Subdivide(f.geom,256) AS p(geom) WHERE f.layer=%s", (layer,))
             print(f"Loaded {layer}: {len(rows)} validated features")
+        connection.execute("ANALYZE spatial_feature_parts")
 
 
 def main() -> None:

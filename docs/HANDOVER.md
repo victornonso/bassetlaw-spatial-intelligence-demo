@@ -43,7 +43,7 @@ Python ingestion downloads authoritative public sources and validates identifier
 | Department for Education public school download | Open Government Licence v3.0 | https://get-information-schools.service.gov.uk/Downloads |
 | OpenStreetMap basemap | Open Database Licence | https://www.openstreetmap.org/copyright |
 
-The loaded extract contains one district, 25 historical wards, 1,086 generalised flood polygons, 31 brownfield representative points and 61 open educational establishments. These are extract counts, not measures of Council capability. Complete licence wording, provenance and transformations are in DATA_SOURCES.md and data/dataset_registry.json. Every Bassetlaw-specific fact used is recorded with its official source in BASSETLAW_FACTS.md.
+The loaded extract contains one district, 25 historical wards, source-detail flood records (see the current source registry for the exact count), 31 brownfield representative points and 61 open educational establishments. These are extract counts, not measures of Council capability. Complete licence wording, provenance and transformations are in DATA_SOURCES.md and data/dataset_registry.json. Every Bassetlaw-specific fact used is recorded with its official source in BASSETLAW_FACTS.md.
 
 ## Hosting and costs
 
@@ -53,12 +53,12 @@ Render Free can sleep and the provider warns of cold starts of 50 seconds or mor
 
 ## Verification
 
-Backend and pipeline: 25 tests passed, one isolated PostGIS test skipped because no TEST_DATABASE_URL was provided. Production PostGIS readiness and actual spatial results were separately verified. Frontend: seven tests passed; lint, type checking and production build passed. See QA.md for exact commands and limitations. QR image decoding returned the intended custom-domain URL. The screenshot was captured from the deployed custom domain with a real Retford evidence result.
+Backend and pipeline: 33 tests passed, one isolated PostGIS test skipped because no TEST_DATABASE_URL was provided. Production PostGIS readiness and actual spatial results were separately verified. Frontend: 13 tests passed; lint, type checking and production build passed. See QA.md for exact commands and limitations. QR image decoding returned the intended custom-domain URL. The screenshot was captured from the deployed custom domain with a real Retford evidence result.
 
 ## Known limitations
 
 - Historical 2024 boundaries are not labelled current electoral boundaries.
-- Flood polygons are simplified at 50 metres; small features can disappear and boundaries shift. This is not a real planning or property-level flood assessment.
+- Flood analysis retains source detail. Separate display tiles are generalised by zoom; the historical generalised district clipping boundary remains a limitation. This is not a real planning or property-level flood assessment.
 - Brownfield locations are historical representative points, not site boundaries, allocations or current permission evidence.
 - School locations are one bounded service example. Distances are straight-line, not journeys, catchment entitlement, capacity or demand.
 - No green-space dataset, Census population/deprivation data, strategic-project boundary or planning-allocation polygons were loaded. Missing indicators are explicit.
